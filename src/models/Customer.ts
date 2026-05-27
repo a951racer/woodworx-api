@@ -5,7 +5,11 @@ export interface ICustomer extends Document {
   name: string;
   email?: string;
   phone?: string;
-  address?: string;
+  streetLine1?: string;
+  streetLine2?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
   notes: string;
   createdAt: Date;
   updatedAt: Date;
@@ -28,7 +32,19 @@ const customerSchema = new Schema<ICustomer>(
     phone: {
       type: String,
     },
-    address: {
+    streetLine1: {
+      type: String,
+    },
+    streetLine2: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    zip: {
       type: String,
     },
     notes: {

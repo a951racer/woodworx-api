@@ -19,7 +19,11 @@ const createCustomerSchema = Joi.object({
   name: Joi.string().trim().required(),
   email: Joi.string().email().lowercase().trim().allow('').optional(),
   phone: Joi.string().trim().allow('').optional(),
-  address: Joi.string().trim().allow('').optional(),
+  streetLine1: Joi.string().trim().allow('').optional(),
+  streetLine2: Joi.string().trim().allow('').optional(),
+  city: Joi.string().trim().allow('').optional(),
+  state: Joi.string().trim().allow('').optional(),
+  zip: Joi.string().trim().allow('').optional(),
   notes: Joi.string().allow('').optional(),
 });
 
@@ -27,7 +31,11 @@ const updateCustomerSchema = Joi.object({
   name: Joi.string().trim().optional(),
   email: Joi.string().email().lowercase().trim().allow('').optional(),
   phone: Joi.string().trim().allow('').optional(),
-  address: Joi.string().trim().allow('').optional(),
+  streetLine1: Joi.string().trim().allow('').optional(),
+  streetLine2: Joi.string().trim().allow('').optional(),
+  city: Joi.string().trim().allow('').optional(),
+  state: Joi.string().trim().allow('').optional(),
+  zip: Joi.string().trim().allow('').optional(),
   notes: Joi.string().allow('').optional(),
 }).min(1);
 
