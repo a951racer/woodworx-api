@@ -4,7 +4,7 @@ import Joi from 'joi';
 import { authMiddleware } from '../middleware/auth';
 import { objectId } from '../utils/validators';
 import { ValidationError, FileTooLargeError, UnsupportedFileTypeError } from '../utils/errors';
-import { list, getById, upload, remove, serveFile } from '../controllers/gallery.controller';
+import { list, getById, upload, update, remove, serveFile } from '../controllers/gallery.controller';
 
 const router = Router();
 
@@ -68,6 +68,7 @@ router.get('/', list);
 router.get('/:id', validateIdParam, getById);
 router.get('/:id/file', validateIdParam, serveFile);
 router.post('/', multerUpload.single('file'), handleMulterError, upload);
+router.put('/:id', validateIdParam, multerUpload.single('file'), handleMulterError, update);
 router.delete('/:id', validateIdParam, remove);
 
 export default router;

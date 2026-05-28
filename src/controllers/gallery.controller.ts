@@ -129,6 +129,87 @@ export async function upload(
 }
 
 /**
+ * PUT /api/gallery/:id
+ * Update a gallery item's metadata and optionally replace the file.
+ */
+export async function update(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const item = await GalleryItem.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!item) {
+      throw new NotFoundError('Gallery item not found');
+    }
+
+    // Update metadata fields
+    if (req.body.title !== undefined) item.title = req.body.title;
+    if (req.body.description !== undefined) item.description = req.body.description;
+    if (req.body.tags !== undefined) {
+      const tags = Array.isArray(req.body.tags)
+        ? req.body.tags
+        : (() => {
+            try {
+              const parsed = JSON.parse(req.body.tags);
+              return Array.isArray(parsed) ? parsed : req.body.tags.split(',').map((t: string) => t.trim());
+            } catch {
+              return req.body.tags.split(',').map((t: string) => t.trim());
+            }
+          })();
+      item.tags = tags;
+    }
+
+    // If a new file is provided, upload it and delete the old one
+    if (req.file) {
+      const settings = await Settings.findOne({ userId: req.userId });
+      if (!settings || !settings.driveStoragePath) {
+        res.status(400).json({
+          code: 'DRIVE_NOT_CONFIGURED',
+          message: 'Google Drive storage path must be configured in Settings before uploading',
+        });
+        return;
+      }
+
+      // Delete old file from Drive
+      if (item.fileKey) {
+        try {
+          await deleteFile(item.fileKey);
+        } catch {
+          // Log but don't block
+        }
+      }
+
+      // Upload new file
+      let driveFileId: string;
+      try {
+        driveFileId = await uploadGalleryFile(req.file, item._id.toString(), settings.driveStoragePath);
+      } catch (error: unknown) {
+        console.error('Drive gallery upload error:', error);
+        const message = error instanceof Error ? error.message : 'Failed to upload file';
+        if (message.includes('GOOGLE_REFRESH_TOKEN')) {
+          throw new AppError(500, 'Google Drive is not configured. Contact administrator.', 'DRIVE_AUTH_ERROR');
+        }
+        throw new AppError(502, 'Failed to upload file to Google Drive', 'DRIVE_UPLOAD_FAILED');
+      }
+
+      item.fileKey = driveFileId;
+      item.fileUrl = `/api/gallery/${item._id}/file`;
+      item.mimeType = req.file.mimetype;
+    }
+
+    await item.save();
+    res.status(200).json(item);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
  * GET /api/gallery/:id/file
  * Serve the gallery file (proxied from Google Drive).
  */
