@@ -53,6 +53,7 @@ const createDesignSchema = Joi.object({
   materials: Joi.array().items(materialItemSchema).optional(),
   boards: Joi.array().items(boardSchema).optional(),
   notes: Joi.string().allow('').optional(),
+  tags: Joi.array().items(Joi.string().trim()).optional(),
 });
 
 const updateDesignSchema = Joi.object({
@@ -62,6 +63,7 @@ const updateDesignSchema = Joi.object({
   materials: Joi.array().items(materialItemSchema).optional(),
   boards: Joi.array().items(boardSchema).optional(),
   notes: Joi.string().allow('').optional(),
+  tags: Joi.array().items(Joi.string().trim()).optional(),
 }).min(1);
 
 const idParamSchema = Joi.object({

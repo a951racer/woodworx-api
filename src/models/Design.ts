@@ -28,6 +28,7 @@ export interface IDesign extends Document {
   materials: IMaterialItem[];
   boards: IBoard[];
   notes: string;
+  tags: string[];
   thumbnailFileId?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -90,6 +91,10 @@ const designSchema = new Schema<IDesign>(
     notes: {
       type: String,
       default: '',
+    },
+    tags: {
+      type: [String],
+      default: [],
     },
     thumbnailFileId: {
       type: String,
