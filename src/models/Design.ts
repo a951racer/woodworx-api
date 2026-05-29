@@ -29,6 +29,7 @@ export interface IDesign extends Document {
   boards: IBoard[];
   notes: string;
   tags: string[];
+  galleryItemId?: Types.ObjectId;
   thumbnailFileId?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -95,6 +96,11 @@ const designSchema = new Schema<IDesign>(
     tags: {
       type: [String],
       default: [],
+    },
+    galleryItemId: {
+      type: Schema.Types.ObjectId,
+      ref: 'GalleryItem',
+      default: undefined,
     },
     thumbnailFileId: {
       type: String,
