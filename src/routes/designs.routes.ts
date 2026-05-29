@@ -54,6 +54,7 @@ const createDesignSchema = Joi.object({
   boards: Joi.array().items(boardSchema).optional(),
   notes: Joi.string().allow('').optional(),
   tags: Joi.array().items(Joi.string().trim()).optional(),
+  galleryItemId: objectId.allow('', null).optional(),
 });
 
 const updateDesignSchema = Joi.object({
@@ -64,6 +65,7 @@ const updateDesignSchema = Joi.object({
   boards: Joi.array().items(boardSchema).optional(),
   notes: Joi.string().allow('').optional(),
   tags: Joi.array().items(Joi.string().trim()).optional(),
+  galleryItemId: objectId.allow('', null).optional(),
 }).min(1);
 
 const idParamSchema = Joi.object({
