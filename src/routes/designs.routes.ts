@@ -13,6 +13,7 @@ import {
   remove,
   uploadThumbnail,
   serveThumbnail,
+  importBoards,
 } from '../controllers/designs.controller';
 
 const router = Router();
@@ -92,5 +93,6 @@ router.put('/:id', validateIdParam, validate(updateDesignSchema), update);
 router.delete('/:id', validateIdParam, remove);
 router.post('/:id/thumbnail', validateIdParam, upload.single('thumbnail'), uploadThumbnail);
 router.get('/:id/thumbnail', validateIdParam, serveThumbnail);
+router.post('/:id/boards/import', validateIdParam, upload.single('file'), importBoards);
 
 export default router;
