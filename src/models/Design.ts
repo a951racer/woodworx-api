@@ -8,7 +8,10 @@ export interface IMaterialItem {
 }
 
 export interface IBoard {
+  name: string;
   species: string;
+  material: string;
+  materialType: 'Solid Wood' | 'Sheet Good' | 'Hardware';
   length: number;
   width: number;
   thickness: number;
@@ -47,7 +50,10 @@ const materialItemSchema = new Schema<IMaterialItem>(
 
 const boardSchema = new Schema<IBoard>(
   {
+    name: { type: String, default: '' },
     species: { type: String, required: true },
+    material: { type: String, default: '' },
+    materialType: { type: String, enum: ['Solid Wood', 'Sheet Good', 'Hardware'], default: 'Solid Wood' },
     length: { type: Number, required: true },
     width: { type: Number, required: true },
     thickness: { type: Number, required: true },

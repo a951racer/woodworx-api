@@ -271,6 +271,50 @@ export async function uploadGalleryFile(
 }
 
 /**
+ * Upload a boards CSV file to Google Drive under <storagePath>/boards/.
+ * File is named <designId>.csv.
+ *
+ * @param file - The uploaded CSV file (from multer memory storage)
+ * @param designId - The design's ID for naming the file
+ * @param storagePath - The user's configured Drive storage path
+ * @returns The Google Drive file ID of the uploaded file
+ */
+export async function uploadBoardsCsv(
+  file: Express.Multer.File,
+  designId: string,
+  storagePath: string,
+): Promise<string> {
+  const drive = getDriveClient();
+
+  const boardsFolderId = await resolveSubfolder(drive, storagePath, 'boards');
+
+  const filename = `${designId}.csv`;
+
+  const bufferStream = new Readable();
+  bufferStream.push(file.buffer);
+  bufferStream.push(null);
+
+  const response = await drive.files.create({
+    requestBody: {
+      name: filename,
+      parents: [boardsFolderId],
+    },
+    media: {
+      mimeType: 'text/csv',
+      body: bufferStream,
+    },
+    fields: 'id',
+  });
+
+  const fileId = response.data.id;
+  if (!fileId) {
+    throw new Error('Failed to upload file to Google Drive');
+  }
+
+  return fileId;
+}
+
+/**
  * Delete a file from Google Drive by its file ID.
  *
  * @param fileId - The Google Drive file ID to delete
